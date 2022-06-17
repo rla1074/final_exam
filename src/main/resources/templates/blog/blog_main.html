@@ -37,8 +37,8 @@
 <div layout:fragment="content" class="content">
 
     <h1 class="product_review">상품리뷰 BLOG</h1>
-    <a class="review_write" sec:authorize="isAuthenticated()" href="/blog/write">[리뷰작성하기]</a>
-
+<!--    <a class="review_write" sec:authorize="isAuthenticated()" href="/blog/write">[리뷰작성하기]</a>-->
+    <a class="nav-link" href="/blog/write" sec:authorize="isAuthenticated()">리뷰 등록</a>
     <div class="card" style="width: 18rem;">
         <img src="..." class="card-img-top" alt="...">
         <div class="card-body">
