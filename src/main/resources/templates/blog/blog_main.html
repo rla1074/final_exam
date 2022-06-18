@@ -24,8 +24,16 @@
                 text-align:center;
                 margin:20px;
             }
-            .review_write {
+            .content .review_write {
                 margin-left:1000px;
+            }
+            .card2{
+                margin: auto;
+                margin-bottom: 30px;
+
+            }
+            .card-img-top{
+                margin-top: 20px;
             }
 
         </style>
@@ -34,20 +42,27 @@
 </head>
 <body>
 
-<div layout:fragment="content" class="content">
+    <div layout:fragment="content" class="content">
 
-    <h1 class="product_review">상품리뷰 BLOG</h1>
-<!--    <a class="review_write" sec:authorize="isAuthenticated()" href="/blog/write">[리뷰작성하기]</a>-->
-    <a class="nav-link" href="/blog/write" sec:authorize="isAuthenticated()">리뷰 등록</a>
-    <div class="card" style="width: 18rem;">
-        <img src="..." class="card-img-top" alt="...">
-        <div class="card-body">
-            <h5 class="card-title">제목</h5>
-            <p class="card-text">내용</p>
+
+        <div>
+            <h1 class="product_review">상품리뷰 BLOG</h1>
+            <h4><a class="review_write" href="/blog/write" sec:authorize="isAuthenticated()">리뷰 등록</a></h4>
         </div>
+
+
+        <div class="card card2" style="width: 18rem;" th:each="blogList : ${blogList}">
+               <div class="card-body">
+                   <img th:src="${blogList.imgUrl1}" class="card-img-top" height="200">
+                   <img th:src="${blogList.imgUrl2}" th:if="${blogList.imgUrl2!=null}" class="card-img-top" height="200">
+                   <p class="card-text" th:text="|제목:${blogList.title}|"></p>
+                <p class="card-text" th:text="|작성자:${blogList.createdBy}|"></p>
+                <p class="card-text" th:text="|작성날짜:${blogList.regTime}|"></p>
+                   <p class="card-title">리뷰내용</p>
+                   <h5 class="card-title" th:text="${blogList.content}"></h5>
+            </div>
+        </div>
+       </div>
     </div>
-
-</div>
-
 </body>
 </html>

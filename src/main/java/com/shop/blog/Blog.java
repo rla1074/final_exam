@@ -33,5 +33,4 @@ public class Blog extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
-
 }

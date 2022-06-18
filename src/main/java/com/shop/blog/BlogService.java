@@ -1,17 +1,25 @@
 package com.shop.blog;
 
-import com.shop.dto.ItemFormDto;
-import com.shop.entity.Item;
+
+import com.shop.dto.ItemSearchDto;
+import com.shop.dto.MainItemDto;
 import com.shop.entity.ItemImg;
-import com.shop.repository.ItemRepository;
+import com.shop.entity.Member;
+import com.shop.repository.MemberRepository;
 import com.shop.service.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -22,53 +30,60 @@ public class BlogService {
     @Value("${blogImgLocation}") //설정파일에서 read
     private String blogImgLocation;//blogImgLocation=C:/shop/blog
 
+    @Autowired
     private final BlogRepository blogRepository;
 
     private final FileService fileService;
 
-//    private final ItemImgService itemImgService;
-//    private final ItemImgRepository itemImgRepository;
-public Long saveItem(BlogDto blogDto, List<MultipartFile> itemImgFileList) throws Exception{
+    private final MemberRepository memberRepository;
+    //List<MultipartFile> itemImgFileList
+public Long saveItem(BlogDto blogDto,List<MultipartFile> itemImgFileList,String email) throws Exception {
 
     //리뷰 등록 => Blog table 저장
-    Blog blog = blogDto.createItem();
-    blogRepository.save(blog);
 
     //이미지 등록 => Blog table 에 저장, 이미지는 D:/shop/blog에 저장
-    for(int i=0;i<itemImgFileList.size();i++){
-        Blog blog = new Blog();
+    String oriImgName="";
+    String oriImgName2="";
+    String imgName = "";
+    String imgName2 = "";
+    String imgUrl = "";
+    String imgUrl2 = "";
+
+    Blog blog = blogDto.createItem();
+    blogRepository.save(blog);
+    Member member = memberRepository.findByEmail(email);
 
 
-        if(i == 0)
-            itemImg.setRepimgYn("Y");
-        else
-            itemImg.setRepimgYn("N");
-
-        itemImgService.saveItemImg(itemImg, itemImgFileList.get(i));
-    }
-
-    return item.getId();
-}
-
-    public void saveItemImg(Blog blog, MultipartFile itemImgFile) throws Exception{
-        String oriImgName = itemImgFile.getOriginalFilename();
-        String imgName = "";
-        String imgUrl = "";
-
-        //파일 업로드(이미지 파일을 D:/shop/item에 저장
-        if(!StringUtils.isEmpty(oriImgName)){
+    if(itemImgFileList.get(1).isEmpty())
+        {
+            oriImgName = itemImgFileList.get(0).getOriginalFilename();
             imgName = fileService.uploadFile(blogImgLocation, oriImgName,
-                    itemImgFile.getBytes());
-            imgUrl = "/images/item/" + imgName;
-            // /images/item/uuid이름
+                itemImgFileList.get(0).getBytes());
+            imgUrl = "/images/blog/" + imgName;
+            blog.setImgUrl1(imgUrl);
+            blog.setMember(member);
         }
-        //상품 이미지 정보 저장
-        blog.updateItemImg(oriImgName, imgName, imgUrl);
-//        itemImg.setOriImgName(oriImgName);
-//        itemImg.setImgName(imgName);
-//        itemImg.setImgUrl(imgUrl);
-        blogRepository.save(itemImg);
+        else
+        {
+            oriImgName = itemImgFileList.get(0).getOriginalFilename();
+            imgName = fileService.uploadFile(blogImgLocation, oriImgName,
+                    itemImgFileList.get(0).getBytes());
+            imgUrl = "/images/blog/" + imgName;
+            blog.setImgUrl1(imgUrl);
+
+            oriImgName2 = itemImgFileList.get(1).getOriginalFilename();
+            imgName2 = fileService.uploadFile(blogImgLocation, oriImgName2,
+                    itemImgFileList.get(1).getBytes());
+            imgUrl2 = "/images/blog/" + imgName2;
+            blog.setImgUrl2(imgUrl2);
+            blog.setMember(member);
+        }
+
+    //리뷰 등록 => Blog table 저장
+    return blog.getId();
+}
+    public List<Blog> getAllBlog()
+    {
+        return blogRepository.findAll();
     }
-
-
 }

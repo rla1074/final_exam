@@ -33,6 +33,7 @@ public class ItemService {
 
     private final ItemImgRepository itemImgRepository;
 
+
     public Long saveItem(ItemFormDto itemFormDto, List<MultipartFile> itemImgFileList) throws Exception{
 
         //상품 등록 => item table 저장
@@ -43,7 +44,6 @@ public class ItemService {
         for(int i=0;i<itemImgFileList.size();i++){
             ItemImg itemImg = new ItemImg();
             itemImg.setItem(item);
-
             if(i == 0)
                 itemImg.setRepimgYn("Y");
             else
